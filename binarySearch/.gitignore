@@ -1,0 +1,5 @@
+*.core
+*.exe
+binarySearchTestRunner.c
+testUtils.h
+*.sh
