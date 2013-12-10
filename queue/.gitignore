@@ -1,0 +1,5 @@
+*.core
+*.exe
+*.sh
+queueTestRunner.c
+testUtils.h
