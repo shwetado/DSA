@@ -1,0 +1,6 @@
+*.core
+createScaffold.sh
+runTest.sh
+testUtils.h
+*.exe
+bracketsTestRunner.*
