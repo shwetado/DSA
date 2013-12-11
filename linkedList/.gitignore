@@ -1,0 +1,5 @@
+*.sh
+*.exe
+*.core
+linkedListTestRunner.c
+testUtils.h
