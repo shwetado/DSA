@@ -59,7 +59,6 @@ int insert(List *list, int index, void *data){
     return (index == list->length)?
         insertLast(list,newNode,head,data):
 	    insertInBetween(list,newNode,head,data);
-
 };
 
 int deleteLast(Node* head, List* list){

@@ -1,0 +1,6 @@
+*.exe
+*.sh
+*.core
+isort_previous.c
+isortTestRunner.c
+sort_test.c
