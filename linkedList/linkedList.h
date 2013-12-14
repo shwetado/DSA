@@ -6,11 +6,12 @@ typedef struct Node{
 
 typedef struct {
 	struct Node* head;
-	struct Node* end;
 	int length;
 } List;
 
 typedef char String[256];
 
 List* create();
+Node* createNode(Node *prev, Node *next);
 int insert(List* list,int index, void* data);
+int deleteNode(List* list,int index);

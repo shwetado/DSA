@@ -13,3 +13,4 @@ void test_creates_a_process(){
 	ASSERT(browser->pTime == pTime);
 	ASSERT(browser->priority == priority);
 };
+

@@ -5,46 +5,85 @@ List* create(){
 	List* list = malloc(sizeof(List));
 	list->head = NULL;
 	list->length = 0;
-	list->end = NULL;
 	return list;
 };
 
-int insertFirst(List* list,Node* node,void* data){
-	printf("insertFirst\n");	
-	node->data = data;
-	node->prev = list->head;
-	list->head = node;
-	list->length++;
-	return 1;
+Node* createNode(Node *prev, Node *next){
+  	Node *newNode = malloc(sizeof(Node));
+    newNode->prev = prev;
+    newNode->next = next;
+    return newNode;
 };
 
-int insertLast(List* list,Node* node,void* data){
-	printf("insertLast\n");
-	node->data = data;
-	node->next = list->end;
-	list->end = NULL;
-	list->length++;
-	return 1;
+int insertFirst(List *list, Node *newNode, Node *head,void *data){
+	newNode = createNode(NULL, NULL);
+    if(NULL != head){
+        newNode->next = head;
+        head->prev = newNode;
+    }
+    list->head = newNode;
+    newNode->data = data;
+    list->length++;
+    return 1;
 };
 
-int insertBefore(List* list,int index,Node* node,void* data){
-	printf("insertBefore\n");
-	list->length++;
-	return 1;
+int insertLast(List *list, Node *newNode, Node *head,void *data){
+	newNode = createNode(head, NULL);
+    head->next = newNode;
+    newNode->data = data;
+    list->length++;
+    return 1;
 };
 
-int insert(List* list,int index, void* data){
-	int validIndex = index >= 0 && index <= list->length;
-	int result;
-	Node* node;
-	if(!validIndex)
-		return 0;
-	node = calloc(1, sizeof(Node));
-	if(index == 0)
-		result = insertFirst(list, node, data);
-	else if(index == list->length)
-		result = insertLast(list, node ,data);
-	else
-		result = insertBefore(list, index, node, data);
-	return result;
+int insertInBetween(List *list, Node *newNode, Node *head,void *data){
+	newNode = createNode(head->prev, head);
+    head->prev->next = newNode;
+    newNode->data = data;
+    list->length++;
+    return 1;
+};
+
+int insert(List *list, int index, void *data){
+    Node *head,*newNode;
+    int i;
+    if(index <= -1 || index > list->length)
+        return 0;
+    head = list->head;
+    for (i = 0; i < index ; ++i){
+        if(head->next != NULL)
+            head = head->next;
+    }
+    if(index == 0)
+    	return insertFirst(list,newNode,head,data);
+    else if(index == list->length)
+        return insertLast(list,newNode,head,data);
+    else
+    	return insertInBetween(list,newNode,head,data);
+};
+
+int deleteNode(List* list,int index){
+    int i;
+    Node *head, *deletedNode;
+    if(index <= -1 || index >= list->length)
+        return 0;
+    head = list->head;
+    for(i=0;i<index;i++)
+        head = head->next;
+    if(i==0){                //delete first node
+        list->head = list->head->next;
+        free(head);
+        list->length--;
+        return 1;
+    }
+    if(i==list->length-1){        //delete the last node
+        head->prev->next = NULL;
+        free(head);
+        list->length--;
+        return 1;
+    }
+    head->prev->next = head->next;
+    head->next->prev = head->prev;
+    free(head);
+    list->length--;
+    return 1;
 };
