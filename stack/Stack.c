@@ -18,7 +18,7 @@ int isFull(Stack* stack){
 int push(Stack* stack,void* element){
 	int offset;
 	if(isFull(stack))
-		return 0;
+		realloc(stack, stack->size+1);
 	stack->top = stack->top + 1;
 	offset = stack->top*stack->typeSize;
 	memcpy(stack->base+offset,element,stack->typeSize);

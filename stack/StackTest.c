@@ -188,7 +188,7 @@ void test_pushing_an_integer_element_when_stack_is_full(){
 	res = push(stack,&element);
 	ASSERT(stack->top == 2);
 	res = push(stack,&element);
-	ASSERT(res == 0);
+	ASSERT(res == 1);
 	dispose(stack);
 };
 
@@ -198,7 +198,7 @@ void test_isEmpty_returns_1_if_the_stack_is_empty(){
 	Stack* stack = New(sizeof(int), 3);
 	int result = isEmpty(stack);
 	ASSERT(1 == result);
-	dispose(stack);
+	free(stack);
 };
 
 void test_isEmpty_returns_0_if_the_stack_is_not_empty(){
@@ -207,7 +207,7 @@ void test_isEmpty_returns_0_if_the_stack_is_not_empty(){
 	int element = push(stack,&data );
 	int result = isEmpty(stack);
 	ASSERT(0 == result);
-	dispose(stack);
+	free(stack);
 };
 
 //------------------pop------------------------------------
