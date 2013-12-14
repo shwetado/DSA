@@ -1,17 +1,19 @@
-typedef struct {
-    void** elements;
+#include <stdbool.h>
+typedef struct{
+    void *array;
     int top;
-    int length;
+    int sizeOfElement;
+    int maxElements;
 } Stack;
 
 typedef char String[256];
 
-Stack* create(int length);
-void** getElement(Stack* stack,int top);
-int push(Stack* stack,void* element);
-void* pop(Stack* stack);
+Stack* create(int sizeOfElement,int maxElements);
 
-void* top(Stack* stack);
+int isEmpty(Stack *stack);
+int isFull(Stack *stack);
 
-int isEmpty(Stack* stack);
-int isFull(Stack* stack);
+int push(Stack *stack,void *element);
+void* pop(Stack *stack);
+
+void* top(Stack *stack);

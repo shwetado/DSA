@@ -1,46 +1,49 @@
 #include "stack.h"
+#include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
+#include <string.h>
 
-Stack* create(int length){
-    Stack* stack = calloc(sizeof(Stack), 1);
-    stack->elements = calloc(sizeof(void*), length);
-    stack->top = 0;
-    stack->length = length;
-    return stack;
+Stack* create(int sizeOfElement,int maxElements){
+    Stack *temp = calloc(sizeof(Stack),1);
+    temp->array = calloc(maxElements,sizeOfElement);
+    temp->sizeOfElement = sizeOfElement;
+    temp->maxElements = maxElements;
+    temp->top = -1;
+    return temp;
 };
 
-int isFull(Stack* stack){
-    return stack->top == stack->length;
-};
-
-void** getElement(Stack* stack,int top){
-    return stack->elements + top * sizeof(stack->elements);
-};
-
-int push(Stack* stack,void* element){
-    void* temp;
-    if(isFull(stack)){
-        temp = realloc(stack->elements, stack->length * 2 * sizeof(void*));
-        if(!temp)
-            return 0;
-        stack->elements = temp;
-        stack->length *= 2;
-    }
-    *(getElement(stack, stack->top++)) = element;
+int push(Stack *stack,void *element){
+    void* newElement;
+    if(isFull(stack))        
+    	return 0;
+    newElement = stack->array+((stack->top+1)*stack->sizeOfElement);
+    memcpy (newElement, element, stack->sizeOfElement);
+    stack->top++;
     return 1;
 };
 
-int isEmpty(Stack* stack){
-    return stack->top == 0;
+void* pop(Stack *stack){
+    void* element;
+    if(isEmpty(stack))        
+    	return NULL;
+    element = stack->array+(stack->top*stack->sizeOfElement);
+    stack->top--;
+    return element;
 };
 
-void* pop(Stack* stack){
-    if(isEmpty(stack)) return NULL;
-    return *(getElement(stack,--(stack->top)));
+void* top(Stack *stack){
+    void* element = stack->array+(stack->top*stack->sizeOfElement);
+    return element;
 };
 
-void* top(Stack* stack){
-    if(isEmpty(stack)) return NULL;
-    return *(getElement(stack, (stack->top-1)));
+int isEmpty(Stack *stack){
+    if(stack->top==-1)        
+    	return true;
+    return false; 
 };
+
+int isFull(Stack *stack){
+    if(stack->top==stack->maxElements-1)        
+    	return true;
+    return false; 
+}
