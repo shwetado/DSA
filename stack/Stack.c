@@ -1,51 +1,46 @@
-#include "Stack.h"
+#include "stack.h"
 #include <stdlib.h>
-#include <string.h>
+#include <memory.h>
 
-Stack* New(int typeSize,int size){
-	Stack *stack = (Stack*)calloc(1,sizeof(Stack));
-	stack->typeSize = typeSize;
-	stack->base = calloc(size,typeSize);
-	stack->size = size;
-	stack->top = (-1);
-	return stack;
+Stack* create(int length){
+    Stack* stack = calloc(sizeof(Stack), 1);
+    stack->elements = calloc(sizeof(void*), length);
+    stack->top = 0;
+    stack->length = length;
+    return stack;
 };
 
 int isFull(Stack* stack){
-	return ((stack->top+1) == stack->size);
+    return stack->top == stack->length;
+};
+
+void** getElement(Stack* stack,int top){
+    return stack->elements + top * sizeof(stack->elements);
 };
 
 int push(Stack* stack,void* element){
-	int offset;
-	if(isFull(stack))
-		realloc(stack, stack->size+1);
-	stack->top = stack->top + 1;
-	offset = stack->top*stack->typeSize;
-	memcpy(stack->base+offset,element,stack->typeSize);
-	return 1;
+    void* temp;
+    if(isFull(stack)){
+        temp = realloc(stack->elements, stack->length * 2 * sizeof(void*));
+        if(!temp)
+            return 0;
+        stack->elements = temp;
+        stack->length *= 2;
+    }
+    *(getElement(stack, stack->top++)) = element;
+    return 1;
 };
 
 int isEmpty(Stack* stack){
-	return ((stack->top) == -1);
+    return stack->top == 0;
 };
 
-void* pop(Stack *stack){
-	void* poppedElement = malloc(stack->typeSize);
-	int offset;
-	if(isEmpty(stack))
-		return NULL;
-	offset = stack->top*stack->typeSize;
-	memcpy(poppedElement,stack->base + offset, stack->typeSize);
-	stack->top = stack->top - 1;
-	return poppedElement;
+void* pop(Stack* stack){
+    if(isEmpty(stack)) return NULL;
+    return *(getElement(stack,--(stack->top)));
 };
 
 void* top(Stack* stack){
-	void* topElement = malloc(stack->typeSize);
-	int offset;
-	if(isEmpty(stack))
-		return NULL;
-	offset = stack->top*stack->typeSize;
-	memcpy(topElement,stack->base + offset, stack->typeSize);
-	return topElement;
+    if(isEmpty(stack)) return NULL;
+    return *(getElement(stack, (stack->top-1)));
 };

@@ -53,12 +53,13 @@ int insert(List *list, int index, void *data){
         if(head->next != NULL)
             head = head->next;
     }
+
     if(index == 0)
     	return insertFirst(list,newNode,head,data);
-    else if(index == list->length)
-        return insertLast(list,newNode,head,data);
-    else
-    	return insertInBetween(list,newNode,head,data);
+    return (index == list->length)?
+        insertLast(list,newNode,head,data):
+	    insertInBetween(list,newNode,head,data);
+
 };
 
 int deleteLast(Node* head, List* list){

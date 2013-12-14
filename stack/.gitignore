@@ -1,5 +1,0 @@
-*.sh
-*.exe
-*.core
-testUtils.sh
-StackTestRunner.c

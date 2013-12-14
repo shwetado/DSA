@@ -1,355 +1,279 @@
-#include "testUtils.h"
-#include <string.h>
-#include "Stack.h"
+#include <memory.h>
 #include <stdlib.h>
+#include "stack.h"
+#include "testUtils.h"
+
 //create setup, tearDown, fixtureSetup, fixtureTearDown methods if needed
 
-int areEqual(Stack* actual,Stack* expected){
-	int res = (actual->typeSize == expected->typeSize) &&
-				(actual->size == expected->size) &&
-				(actual->top == expected->top);
-	if(!res)
-		 return res;
-	res = memcmp(actual->base,expected->base,actual->size*actual->typeSize);
-	return 0==res;
+int areEqual(Stack a, Stack b){
+    int result = a.length == b.length && a.top == b.top;
+    if(!result) return result;
+    return 0 == memcmp(a.elements,b.elements,a.length*sizeof(void*));
 };
 
 void dispose(Stack* stack){
-	free(stack->base);
-	free(stack);
+    free(stack->elements);
+    free(stack);
 };
 
-int checkStackElements(Stack* stack,void* elements,int top){
-	int i=0;
-	if(stack->top != top)
-		return 0;
-	return 0 == memcmp(stack->base,elements,stack->size*stack->typeSize);
+void test_creates_a_stack_for_with_given_length (){
+    Stack* stack = create(3);
+    void* array[3] = {NULL,NULL,NULL};
+    Stack expected = {array,0,3};
+    ASSERT(areEqual(expected, *stack));
+    dispose(stack);
+};
+
+void test_pushes_the_element_at_the_top_of_the_stack_for_integers(){
+    int* num = malloc(sizeof(int));
+    Stack* stack = create(1);
+    *num = 400;
+    push(stack, num);
+    ASSERT(400 == **(int**)stack->elements);
+    ASSERT(1 == stack->top && 1 == stack->length);
+    dispose(stack);
+};
+
+void test_pushes_the_given_doubles_at_the_top_of_the_stack(){
+    double *nums = malloc(sizeof(double)*2);
+    Stack* stack = create(2);
+    nums[0] = 400.0;nums[1] = 100.0;
+    push(stack, &nums[0]);
+    push(stack, &nums[1]);
+    ASSERT(400.0 == **(double**)getElement(stack, 0));
+    ASSERT(100.0 == **(double**)getElement(stack, 1));
+    ASSERT(2 == stack->top && 2 == stack->length);
+    dispose(stack);
 }
 
-typedef struct{
-	int data;
-	char ch;
-} Simple;
-
-
-//------------------New--------------------------
-
-void test_creation_of_stack_of_three_integers(){
-	Stack *actual = New(sizeof(int),3);
-	int expected_arr[3] = {0,0,0};
-	Stack expected = {&expected_arr,-1,3,sizeof(int)};
-	ASSERT(areEqual(actual,&expected));
-	dispose(actual);
-};
-
-void test_creation_of_stack_of_three_characters(){
-	Stack *actual = New(sizeof(char),3);
-	char expected_arr[3] = {0,0,0};
-	Stack expected = {&expected_arr,-1,3,sizeof(char)};
-	ASSERT(areEqual(actual,&expected));
-	dispose(actual);
-};
-
-void test_creation_of_stack_of_three_floats(){
-	Stack *actual = New(sizeof(float),3);
-	float expected_arr[3] = {0.0f,0.0f,0.0f};
-	Stack expected = {&expected_arr,-1,3,sizeof(float)};
-	ASSERT(areEqual(actual,&expected));
-	dispose(actual);
-};
-
-void test_creation_of_stack_of_three_doubles(){
-	Stack *actual = New(sizeof(double),3);
-	double expected_arr[3] = {0.0,0.0,0.0};
-	Stack expected = {&expected_arr,-1,3,sizeof(double)};
-	ASSERT(areEqual(actual,&expected));
-	dispose(actual);
-};
-
-void test_creation_of_stack_of_three_strings(){
-	Stack *actual = New(sizeof(String),3);
-	String expected_arr[3] = {"","",""};
-	Stack expected = {&expected_arr,-1,3,sizeof(String)};
-	ASSERT(areEqual(actual,&expected));
-	dispose(actual);
-};
-
-void test_creation_of_stack_of_three_structures(){
-	Stack* actual = New(sizeof(Simple),3);
-	Simple *s = calloc(3,sizeof(Simple));
-	Stack expected = {s,-1,3,sizeof(Simple)};
-	ASSERT(areEqual(actual,&expected));
-	dispose(actual);
-};
-
-//-----------------isFull--------------------
-
-void test_isFull_gives_1_if_stack_is_full(){
-	double expected_arr[3] = {0.0,0.0,0.0};
-	Stack stack = {&expected_arr,2,3,sizeof(double)};
-	int result = isFull(&stack);
-	ASSERT(1 == result);
-};
-
-void test_isFull_gives_0_if_stack_is_not_full(){
-	double expected_arr[3] = {0.0,0.0,0.0};
-	Stack stack = {&expected_arr,1,3,sizeof(double)};
-	int result = isFull(&stack);
-	ASSERT(0 == result);
+void test_pushes_the_given_characters_at_the_top_of_the_stack(){
+    Stack* stack = create(3);
+    char* characters = malloc(sizeof(char)*2);
+    characters[0] = 'a';
+    characters[1] = 'b';
+    push(stack, &characters[0]);
+    push(stack, &characters[1]);
+    ASSERT('a' == **(char**)getElement(stack, 0));
+    ASSERT('b' == **(char**)getElement(stack, 1));
+    ASSERT(2 == stack->top && 3 == stack->length);
+    dispose(stack);
 }
 
-//-------------------------push------------------
-
-void test_pushing_an_integer_element_to_stack(){
-	Stack* stack = New(sizeof(int),3);
-	int element = 10;
-	int elements[3] = {10,0,0};
-	int res = push(stack,&element);
-	ASSERT(res == 1);
-	ASSERT(checkStackElements(stack,elements,0));
-	dispose(stack);
-};
-
-void test_pushing_an_character_element_to_stack(){
-	Stack* stack = New(sizeof(char),3);
-	char element = 'a';
-	char elements[3] = {'a',0,0};
-	int res = push(stack,&element);
-	ASSERT(res == 1);
-	ASSERT(checkStackElements(stack,elements,0));
-	dispose(stack);
-};
-
-void test_pushing_an_float_element_to_stack(){
-	Stack* stack = New(sizeof(float),3);
-	float element = 10.0f;
-	float elements[3] = {10.0f,0.0f,0.0f};
-	int res = push(stack,&element);
-	ASSERT(res == 1);
-	ASSERT(checkStackElements(stack,elements,0));
-	dispose(stack);
-};
-
-void test_pushing_an_double_element_to_stack(){
-	Stack* stack = New(sizeof(double),3);
-	double element = 10.0;
-	double elements[3] = {10.0,0.0,0.0};
-	int res = push(stack,&element);
-	ASSERT(res == 1);
-	ASSERT(checkStackElements(stack,elements,0));
-	dispose(stack);
-};
-
-void test_pushing_an_String_element_to_stack(){
-	Stack* stack = New(sizeof(String),3);
-	String element = "abc";
-	String elements[3] = {"abc","",""};
-	int res = push(stack,&element);
-	ASSERT(res == 1);
-	ASSERT(checkStackElements(stack,elements,0));
-	dispose(stack);
-};
-
-void test_pushing_an_strucure_element_to_stack(){
-	Stack* stack = New(sizeof(Simple),3);
-	Simple *element = calloc(1,sizeof(Simple));
-	Simple *emptyElement = calloc(1,sizeof(Simple));
-	Simple* elements = calloc(3,sizeof(Simple));
-	int res;
-	element->data = 10;
-	element->ch ='a';
-	elements[0].data = 10;
-	elements[0].ch = 'a';
-	res = push(stack,element);
-	ASSERT(res == 1);
-	ASSERT(checkStackElements(stack,elements,0));
-	dispose(stack);
-};
-
-void test_pushing_two_elements_in_the_stack(){
-	Stack* stack = New(sizeof(int),3);
-	int element = 10;
-	int elements[3] = {10,0,0};
-	int res = push(stack,&element);
-	ASSERT(res == 1);
-	ASSERT(checkStackElements(stack,elements,0));
-	res = push(stack,&element);
-	ASSERT(res == 1);
-	elements[1] = 10;
-	ASSERT(checkStackElements(stack,elements,1));
-	dispose(stack);
+void test_pushes_the_given_Strings_at_the_top_of_the_stack(){
+    String* names = malloc(sizeof(String)*2);
+    Stack* stack = create(2);
+    strcpy(names[0], "hello");
+    strcpy(names[1], "world");
+    push(stack, &names[0]);
+    push(stack, &names[1]);
+    ASSERT(0 == strcmp(names[0], *(char**)getElement(stack, 0)));
+    ASSERT(0 == strcmp(names[1], *(char**)getElement(stack, 1)));
+    dispose(stack);
 }
 
-void test_pushing_an_integer_element_when_stack_is_full(){
-	Stack* stack = New(sizeof(int),3);
-	int element = 10;
-	int res = push(stack,&element);
-	res = push(stack,&element);
-	res = push(stack,&element);
-	ASSERT(stack->top == 2);
-	res = push(stack,&element);
-	ASSERT(res == 1);
-	dispose(stack);
+typedef struct {
+    int accNo;
+    int balance;
+} Account;
+
+int areAccountsEqual(Account expected,Account actual){
+    return expected.accNo == actual.accNo && expected.balance == actual.balance;
 };
 
-//------------------isEmpty--------------------------------
-
-void test_isEmpty_returns_1_if_the_stack_is_empty(){
-	Stack* stack = New(sizeof(int), 3);
-	int result = isEmpty(stack);
-	ASSERT(1 == result);
-	free(stack);
+void test_pushes_the_structures__into_stack(){
+    Account* account = malloc(sizeof(Account));
+    Stack* stack = create(3);
+    account->accNo = 213;account->balance = 2130;
+    push(stack, account);
+    ASSERT(areAccountsEqual(*account, **(Account**)getElement(stack, 0)));
+    ASSERT(1 == stack->top && 3 == stack->length);
+    dispose(stack);
 };
 
-void test_isEmpty_returns_0_if_the_stack_is_not_empty(){
-	Stack* stack = New(sizeof(int), 3);
-	int data = 10;
-	int element = push(stack,&data );
-	int result = isEmpty(stack);
-	ASSERT(0 == result);
-	free(stack);
+void test_deletes_the_top_most_element_from_the_stack_integers(){
+    Stack* stack = create(3);
+    int *nums = malloc(sizeof(int)*4);
+    int* result;
+    nums[0] = 100;nums[1] = 400;nums[2] = 150;nums[3] = 200;
+    push(stack, &nums[0]);	push(stack, &nums[2]);
+    push(stack, &nums[1]);  push(stack, &nums[3]);
+    result = pop(stack);
+    ASSERT(200 == *result);
+    ASSERT(3 == stack->top);
+    dispose(stack);
 };
 
-//------------------pop------------------------------------
-
-void test_popping_an_integer_element_from_stack(){
-	Stack* stack = New(sizeof(int), 3);
-	int* result;
-	int status ,element = 10;
-	status = push(stack, &element);
-	result = pop(stack);
-	ASSERT(*result == 10);
-	ASSERT(stack->top == -1);
-	dispose(stack);
+void test_deletes_the_top_most_element_from_the_stack_doubles(){
+    Stack* stack = create(3);
+    double* nums = malloc(sizeof(double)*4);
+    double* result;
+    nums[0] = 100.0;nums[1] = 400.0;nums[2] = 150.0;nums[3] = 200.0;
+    push(stack, &nums[0]);
+    push(stack, &nums[2]);
+    push(stack, &nums[1]);
+    push(stack, &nums[3]);
+    result = pop(stack);
+    ASSERT(200.0 == *result);
+    ASSERT(3 == stack->top);
+    dispose(stack);
 };
 
-void test_popping_an_character_element_from_stack(){
-	Stack* stack = New(sizeof(char), 3);
-	char* result;
-	int status;
-	char element = 'a';
-	status = push(stack, &element);
-	result = pop(stack);
-	ASSERT(*result == 'a');
-	ASSERT(stack->top == -1);
-	dispose(stack);
+void test_deletes_the_top_most_element_from_the_stack_characters(){
+    Stack* stack = create(3);
+    char* characters = malloc(sizeof(char)*4);
+    char* result;
+    characters[0] = 'a';characters[1] = 'b';characters[2] = 'c';characters[3] = 'd';
+    push(stack, &characters[0]);    push(stack, &characters[2]);
+    push(stack, &characters[1]);    push(stack, &characters[3]);
+    result = pop(stack);
+    ASSERT('d' == *result);
+    ASSERT(3 == stack->top);
+    dispose(stack);
 };
 
-void test_popping_an_double_element_from_stack(){
-	Stack* stack = New(sizeof(double), 3);
-	double* result;
-	int status;
-	double element = 10.0;
-	status = push(stack, &element);
-	result = pop(stack);
-	ASSERT(*result == 10.0);
-	ASSERT(stack->top == -1);
-	dispose(stack);
+void test_deletes_the_top_most_element_from_the_stack_Strings(){
+    String* nums = malloc(sizeof(String)*2);
+    char* result;
+    Stack* stack = create(2);
+    strcpy(nums[0], "hello");
+    strcpy(nums[1], "world");
+    push(stack, &nums[0]);	push(stack, &nums[1]);
+    result = pop(stack);
+    ASSERT(0 == strcmp("world", result));
+    ASSERT(1 == stack->top);
+    dispose(stack);
 };
 
-void test_popping_an_float_element_from_stack(){
-	Stack* stack = New(sizeof(float), 3);
-	float* result;
-	int status;
-	float element = 10.0;
-	status = push(stack, &element);
-	result = pop(stack);
-	ASSERT(*result == 10.0);
-	ASSERT(stack->top == -1);
-	dispose(stack);
+void test_deletes_structures_on_the_top_of_stacks(){
+    Account* account = malloc(sizeof(Account));
+    Stack* stack = create(3);
+    Account* result;
+    account->accNo = 213;account->balance = 2130;
+    push(stack, account);
+    ASSERT(areAccountsEqual(*account, **(Account**)getElement(stack, 0)));
+    result = pop(stack);
+    ASSERT(areAccountsEqual(*result, *account));
+    ASSERT(0 == stack->top && 3 == stack->length);
+    dispose(stack);
+}
+
+void test_deletes_the_top_most_element_and_pushes_one_more_element_at_top(){
+    int *nums = malloc(sizeof(int)*4);
+    int* result;
+    Stack* stack = create(4);
+    nums[0] = 100;	nums[1] = 400;	nums[2] = 150;	nums[3] = 200;
+    push(stack, &nums[0]);    push(stack, &nums[2]);
+    push(stack, &nums[1]);    push(stack, &nums[3]);
+    ASSERT(200 == **(int**)getElement(stack, 3));
+    result = (int*)(pop(stack));
+    ASSERT(200 == *result);
+    push(stack, &nums[1]);
+    ASSERT(4 == stack->top);
+    ASSERT(400 == **(int**)getElement(stack, 3));
+    dispose(stack);
 };
 
-void test_popping_an_String_element_from_stack(){
-	Stack* stack = New(sizeof(String), 3);
-	String* result;
-	int status;
-	String element = "abc";
-	status = push(stack, &element);
-	result = pop(stack);
-	ASSERT(0 == strcmp(*result,"abc"));
-	ASSERT(stack->top == -1);
-	dispose(stack);
+void test_prevents_to_delete_the_element_if_top_is_zero(){
+    void* result;
+    Stack* stack = create(5);
+    result = pop(stack);
+    ASSERT(NULL == result);
+    dispose(stack);
 };
 
-void test_popping_an_integer_element_when_the_stack_is_empty(){
-	Stack* stack = New(sizeof(int), 3);
-	int* result;
-	result = pop(stack);
-	ASSERT(NULL == result);
-	dispose(stack);
+void test_gives_the_top_most_element_from_the_stack_integers(){
+    int *nums = malloc(sizeof(int)*4);
+    Stack* stack = create(3);
+    int* result;
+    nums[0] = 100;nums[1] = 400;nums[2] = 150;nums[3] = 200;
+    push(stack, &nums[0]);    push(stack, &nums[2]);
+    push(stack, &nums[1]);    push(stack, &nums[3]);
+    result = top(stack);
+    ASSERT(200 == *result);
+    ASSERT(4 == stack->top);
+    dispose(stack);
 };
 
-//------------------top---------------------
-
-void test_top_element_in_stack_of_integers(){
-	Stack* stack = New(sizeof(int),3);
-	int* result;
-	int res;
-	int element = 10;
-	res = push(stack,&element);
-	result = top(stack);
-	ASSERT(element == *result);
-	dispose(stack);
+void test_gives_the_top_most_element_from_the_stack_doubles(){
+    double* nums = malloc(sizeof(double)*4);
+    Stack* stack = create(3);
+    double* result;
+    nums[0] = 100.0;nums[1] = 400.0;nums[2] = 150.0;nums[3] = 200.0;
+    push(stack, &nums[0]);    push(stack, &nums[2]);
+    push(stack, &nums[1]);    push(stack, &nums[3]);
+    result = top(stack);
+    ASSERT(200.0 == *result);
+    ASSERT(4 == stack->top);
+    dispose(stack);
 };
 
-void test_top_element_in_stack_of_characters(){
-	Stack* stack = New(sizeof(char),3);
-	char* result;
-	int res;
-	char element = 'a';
-	res = push(stack,&element);
-	result = top(stack);
-	ASSERT(element == *result);
-	dispose(stack);
+void test_gives_the_top_most_element_from_the_stack_characters(){
+    char* characters = malloc(sizeof(char)*4);
+    Stack* stack = create(3);
+    char* result;
+    characters[0] = 'a';characters[1] = 'b';characters[2] = 'c';characters[3] = 'd';
+    push(stack, &characters[0]);    push(stack, &characters[2]);
+    push(stack, &characters[1]);    push(stack, &characters[3]);
+    result = top(stack);
+    ASSERT('d' == *result);
+    ASSERT(4 == stack->top);
+    dispose(stack);
 };
 
-void test_top_element_in_stack_of_floats(){
-	Stack* stack = New(sizeof(float),3);
-	float* result;
-	int res;
-	float element = 10.0f;
-	res = push(stack,&element);
-	result = top(stack);
-	ASSERT(element == *result);
-	dispose(stack);
+void test_gives_1_when_the_stack_is_empty_integers(){
+    int result;
+    Stack* stack = create(5);
+    result = isEmpty(stack);
+    ASSERT(1==result);
+    dispose(stack);
 };
 
-void test_top_element_in_stack_of_doubles(){
-	Stack* stack = New(sizeof(double),3);
-	double* result;
-	int res;
-	double element1 = 10.0;
-	double element2 = 11.0;
-	res = push(stack,&element1);
-	res = push(stack,&element2);
-	result = top(stack);
-	ASSERT(element2 == *result);
-	dispose(stack);
+void test_gives_0_when_the_stack_is_not_empty(){
+    int result;
+    Stack* stack = create(5);
+    *(int*)stack->elements = 150;
+    stack->top = 1;
+    result = isEmpty(stack);
+    ASSERT(0==result);
+    dispose(stack);
 };
 
-void test_top_element_in_stack_of_Strings(){
-	Stack* stack = New(sizeof(String),3);
-	String* result;
-	int res;
-	String element1 = "abc";
-	String element2 = "xyz";
-	res = push(stack,&element1);
-	res = push(stack,&element2);
-	result = top(stack);
-	ASSERT(0 == strcmp(element2,*result));
-	dispose(stack);
+void test_gives_1_when_the_stack_is_full_integers(){
+    int* num = malloc(sizeof(int));
+    int result;
+    Stack* stack = create(1);
+    *num = 150;
+    push(stack, num);
+    result = isFull(stack);
+    ASSERT(1==result);
+    dispose(stack);
 };
 
-void test_top_element_in_stack_of_structures(){
-	Stack* stack =New(sizeof(Simple),3);
-	Simple* s = calloc(1,sizeof(Simple));
-	Simple* expected;
-	int res;
-	s->data = 10;
-	s->ch = 'b';
-	res = push(stack,s);
-	expected = top(stack);
-	ASSERT(expected->data == 10);
-	ASSERT(expected->ch == 'b');
-	dispose(stack);
+void test_gives_0_when_the_stack_is_not_full(){
+    int result;
+    Stack* stack = create(4);
+    result = isFull(stack);
+    ASSERT(0==result);
+    dispose(stack);
+};
+
+void test_gives_the_top_most_element_from_the_stack_Strings(){
+    String* nums = malloc(sizeof(String)*2);
+    Stack* stack = create(2);
+    char* result;
+    strcpy(nums[0], "hello");
+    strcpy(nums[1], "world");
+    push(stack, &nums[0]);    push(stack, &nums[1]);
+    result = top(stack);
+    ASSERT(0 == strcmp("world", result));
+    ASSERT(2 == stack->top);
+    dispose(stack);
+};
+
+void test_gives_null_if_no_element_in_stack(){
+    void* result;
+    Stack* stack = create(5);
+    result = top(stack);
+    ASSERT(NULL == result);
+    dispose(stack);
 };
