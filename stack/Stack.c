@@ -4,19 +4,19 @@
 #include <string.h>
 
 Stack* create(int sizeOfElement,int maxElements){
-    Stack *temp = calloc(sizeof(Stack),1);
-    temp->array = calloc(maxElements,sizeOfElement);
-    temp->sizeOfElement = sizeOfElement;
-    temp->maxElements = maxElements;
-    temp->top = -1;
-    return temp;
+    Stack *stack = calloc(sizeof(Stack),1);
+    stack->base = calloc(maxElements,sizeOfElement);
+    stack->sizeOfElement = sizeOfElement;
+    stack->maxElements = maxElements;
+    stack->top = -1;
+    return stack;
 };
 
 int push(Stack *stack,void *element){
     void* newElement;
     if(isFull(stack))        
     	return 0;
-    newElement = stack->array+((stack->top+1)*stack->sizeOfElement);
+    newElement = stack->base+((stack->top+1)*stack->sizeOfElement);
     memcpy (newElement, element, stack->sizeOfElement);
     stack->top++;
     return 1;
@@ -25,14 +25,14 @@ int push(Stack *stack,void *element){
 void* pop(Stack *stack){
     void* element;
     if(isEmpty(stack))        
-    	return NULL;
-    element = stack->array+(stack->top*stack->sizeOfElement);
+    	realloc(stack, stack->maxElements+1);
+    element = stack->base+(stack->top*stack->sizeOfElement);
     stack->top--;
     return element;
 };
 
 void* top(Stack *stack){
-    void* element = stack->array+(stack->top*stack->sizeOfElement);
+    void* element = stack->base+(stack->top*stack->sizeOfElement);
     return element;
 };
 

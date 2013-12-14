@@ -1,6 +1,6 @@
 #include <stdbool.h>
 typedef struct{
-    void *array;
+    void *base;
     int top;
     int sizeOfElement;
     int maxElements;
