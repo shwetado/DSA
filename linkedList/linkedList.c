@@ -67,23 +67,21 @@ int deleteNode(List* list,int index){
     if(index <= -1 || index >= list->length)
         return 0;
     head = list->head;
-    for(i=0;i<index;i++)
+    for(i = 0; i < index;i++)
         head = head->next;
-    if(i==0){                //delete first node
+    if(i == 0){
         list->head = list->head->next;
-        free(head);
         list->length--;
         return 1;
     }
-    if(i==list->length-1){        //delete the last node
+    if(i == list->length-1){
         head->prev->next = NULL;
-        free(head);
         list->length--;
         return 1;
     }
-    head->prev->next = head->next;
-    head->next->prev = head->prev;
+    head -> prev -> next = head -> next;
+    head -> next -> prev = head -> prev;
+    list -> length--;
     free(head);
-    list->length--;
     return 1;
 };
