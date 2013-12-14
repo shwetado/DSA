@@ -61,27 +61,34 @@ int insert(List *list, int index, void *data){
     	return insertInBetween(list,newNode,head,data);
 };
 
+int deleteLast(Node* head, List* list){
+    head->prev->next = NULL;
+    list->length--;
+    return 1;
+};
+
+int deleteFirst(Node* head, List* list){
+    list->head = list->head->next;
+    list->length--;
+    return 1;
+}
 int deleteNode(List* list,int index){
     int i;
     Node *head, *deletedNode;
     if(index <= -1 || index >= list->length)
         return 0;
     head = list->head;
-    for(i = 0; i < index;i++)
+    for(i = 0; i < index ;i++)
         head = head->next;
-    if(i == 0){
-        list->head = list->head->next;
+    if(i == 0)
+        deleteFirst(head, list);
+    else if(i == list->length-1)
+        deleteLast(head, list);
+    else{
+        head->prev->next = head->next;
+        head->next->prev = head->prev;
         list->length--;
-        return 1;
     }
-    if(i == list->length-1){
-        head->prev->next = NULL;
-        list->length--;
-        return 1;
-    }
-    head -> prev -> next = head -> next;
-    head -> next -> prev = head -> prev;
-    list -> length--;
     free(head);
     return 1;
 };
