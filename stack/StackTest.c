@@ -12,7 +12,7 @@ int areEqual(Stack a, Stack b){
     			 a.sizeOfElement == b.sizeOfElement;
     if(!result) 
     	return result;
-    return 0 == memcmp(a.array,b.array,a.maxElements*a.sizeOfElement);
+    return 0 == memcmp(a.base,b.base,a.maxElements*a.sizeOfElement);
 };
 
 void test_createelement_stack_having_2_int_elements(){

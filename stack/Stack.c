@@ -25,7 +25,7 @@ int push(Stack *stack,void *element){
 void* pop(Stack *stack){
     void* element;
     if(isEmpty(stack))        
-    	realloc(stack, stack->maxElements+1);
+    	return NULL;
     element = stack->base+(stack->top*stack->sizeOfElement);
     stack->top--;
     return element;
