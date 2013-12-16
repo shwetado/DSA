@@ -2,45 +2,47 @@
 #include <stdlib.h>
 #include <memory.h>
 
+void dispose(Stack* pStack){
+    free(pStack->elements);
+    free(pStack);
+};
+
 Stack* create(int length){
-    Stack* stack = calloc(sizeof(Stack), 1);
-    stack->elements = calloc(sizeof(void*), length);
-    stack->top = 0;
-    stack->length = length;
-    return stack;
+    Stack* pStack = calloc(1,sizeof(Stack));
+    pStack->elements = calloc(length,sizeof(void*));
+    pStack->top = 0;
+    pStack->length = length;
+    return pStack;
 };
 
-int isFull(Stack* stack){
-    return stack->top == stack->length;
+int isFull(Stack* pStack){
+    return pStack->top == pStack->length;
 };
 
-void** getElement(Stack* stack,int top){
-    return stack->elements + top * sizeof(stack->elements);
-};
-
-int push(Stack* stack,void* element){
-    void* temp;
-    if(isFull(stack)){
-        temp = realloc(stack->elements, stack->length * 2 * sizeof(void*));
-        if(!temp)
-            return 0;
-        stack->elements = temp;
-        stack->length *= 2;
+int push(Stack* pStack,void* element){
+    if(isFull(pStack)){
+        pStack->length *= 2;
+        pStack->elements = realloc(pStack->elements, pStack->length * sizeof(void*));
     }
-    *(getElement(stack, stack->top++)) = element;
+    *(pStack->elements+pStack->top++) = element;
     return 1;
 };
 
-int isEmpty(Stack* stack){
-    return stack->top == 0;
+int isEmpty(Stack* pStack){
+    return pStack->top == 0;
 };
 
-void* pop(Stack* stack){
-    if(isEmpty(stack)) return NULL;
-    return *(getElement(stack,--(stack->top)));
+void* top(Stack* pStack){
+    void* topElement;
+    if(isEmpty(pStack))     return NULL;
+    topElement = *(pStack->elements+pStack->top-1);
+    return topElement;
 };
 
-void* top(Stack* stack){
-    if(isEmpty(stack)) return NULL;
-    return *(getElement(stack, (stack->top-1)));
+void* pop(Stack* pStack){
+    void *element;
+    element = top(pStack);
+    if(isEmpty(pStack))     return NULL;
+    --(pStack->top);
+    return element;
 };

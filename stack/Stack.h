@@ -4,14 +4,12 @@ typedef struct {
     int length;
 } Stack;
 
-typedef char String[256];
-
 Stack* create(int length);
-void** getElement(Stack* stack,int top);
+void dispose();
+
 int push(Stack* stack,void* element);
 void* pop(Stack* stack);
 
 void* top(Stack* stack);
 
 int isEmpty(Stack* stack);
-int isFull(Stack* stack);
