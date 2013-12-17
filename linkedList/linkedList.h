@@ -9,7 +9,7 @@ typedef struct {
 	int length;
 } List;
 
-typedef char String[256];
+typedef char String[256]; // should not be here
 
 List* create();
 Node* createNode(Node *prev, Node *next);

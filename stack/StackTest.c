@@ -1,5 +1,6 @@
 #include <memory.h>
 #include <stdlib.h>
+#include "customHeader.h"
 #include "stack.h"
 #include "testUtils.h"
 
@@ -43,8 +44,6 @@ void test_pushes_the_given_characters_at_the_top_of_the_stack(){
     ASSERT(element == *(char*)top(pStack));
     dispose(pStack);
 };
-
-typedef char String[256];
 
 void test_pushes_the_given_Strings_at_the_top_of_the_stack(){
     Stack* pStack = create(1);

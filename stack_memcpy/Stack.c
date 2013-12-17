@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Stack* New(int typeSize,int size){
+Stack* create(int typeSize,int size){
 	Stack *stack = (Stack*)calloc(1,sizeof(Stack));
 	stack->typeSize = typeSize;
 	stack->base = calloc(size,typeSize);
