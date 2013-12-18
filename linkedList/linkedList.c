@@ -53,7 +53,6 @@ int insert(List *list, int index, void *data){
         if(head->next != NULL)
             head = head->next;
     }
-
     if(index == 0)
     	return insertFirst(list,newNode,head,data);
     return (index == list->length)?
@@ -71,7 +70,8 @@ int deleteFirst(Node* head, List* list){
     list->head = list->head->next;
     list->length--;
     return 1;
-}
+};
+
 int deleteNode(List* list,int index){
     int i;
     Node *head, *deletedNode;
