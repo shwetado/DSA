@@ -1,6 +1,6 @@
 #include <string.h>
 #include "brackets.h"
-#include "../stack_memcpy/Stack.h"
+#include "../stack-with-memcpy/Stack.h"
 
 int doesBracketMatch(char firstChar,char secondChar){
 	if(firstChar == '(' && secondChar == ')')

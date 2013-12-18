@@ -1,0 +1,4 @@
+*.sh
+*.exe
+*.core
+pQueueTestRunner.c

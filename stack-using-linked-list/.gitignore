@@ -1,0 +1,5 @@
+*.sh
+*.exe
+*.core
+stackTestTestRunner.c
+stackTestRunner.c
