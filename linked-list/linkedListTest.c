@@ -220,3 +220,22 @@ void test_deletes_last_element_from_the_linkList(){
     ASSERT(2 == list->length);
     ASSERT(NULL == list->head->next->next);
 }
+
+
+void test_iterator(){
+    List* list = create();
+    Iterator it;
+    int res;
+    int data1 = 100,data2 = 200;
+    void *element;
+    res = insert(list,0,&data1);
+    res = insert(list,1,&data2);
+    it = getIterator(list);
+    ASSERT(it.hasNext(&it));
+    element = it.next(&it);
+    ASSERT(100 == *(int*)element);
+    element = it.next(&it);
+    ASSERT(200 == *(int*)element);
+    element = it.next(&it);
+    ASSERT(NULL == element);
+};
