@@ -45,9 +45,9 @@ void* searchTreeNode(Tree *tree,void* parent){
 };
 
 int search(void* tree,void* parent){
-    void *matchedNode = searchTreeNode(tree,parent);
-    if(matchedNode) return 1;
-    return 0;
+    return searchTreeNode(tree,parent) != NULL;
+    // if(matchedNode) return 1;
+    // return 0;
 };
 
 int insertTreeNode(Tree *tree,void *parent,void *child){
@@ -62,7 +62,7 @@ int insertTreeNode(Tree *tree,void *parent,void *child){
     matchedTreeNode =  searchTreeNode(tree,parent);
     node = createTreeNode(child, matchedTreeNode);
     if(matchedTreeNode->list == NULL){
-        list = create();//creation of list who will dispose it
+        list = create();//dispose remaining
         matchedTreeNode->list = list;
     }
     list = matchedTreeNode->list;
@@ -109,4 +109,35 @@ Iterator getChildren(Tree *tree,void* parent){
     it.next = getCurrentTreeNode;
     it.hasNext = hasCurrentTreeNode;
     return it;
+};
+
+int getIndex(List* list,void* data,compareFunc cmp){
+    int i = 0;
+    TreeNode *tn;
+    Iterator it = getIterator(list);
+    while(it.hasNext(&it)){
+        i = i + 1;
+        tn = (TreeNode*)it.next(&it);
+        if(0 == cmp(tn->data,data))
+            return i-1;
+    }
+    return i-1;
+};
+
+int deleteTreeNode(Tree* tree, void* data){
+    List* list;
+    int index;
+    TreeNode *node = searchTreeNode(tree,data);
+    if(node == tree->root){
+        tree->root = NULL;
+        free(node);
+        return 1;
+    }
+    list = node->parent->list;
+    index = getIndex(list,data,tree->compare);
+    deleteNode(list,index);
+    if(length(list) == 0)
+        (node->parent->list) = NULL;
+    free(node);
+    return 1;
 };

@@ -93,32 +93,6 @@ int deleteNode(List* list,int index){
     return 1;
 };
 
-
-// int hasNext(Iterator *it){
-//     List dList;
-//     if(NULL == it->list) return 0;
-//     dList = *(List*)it->list;
-//     // if(it->position == dList.length) return 0;
-//     return (it->current == NULL);
-//     // return 1;
-// };
-
-// void* next(Iterator* it){
-//     Node* head = ((List*)(it->list))->head;;
-//     void* current = head;
-//     if(!hasNext(it)) return NULL;
-
-//     // int i;
-//     // Node* head;
-//     // head = ((List*)(it->list))->head;
-//     // for(i = 0; i<it->position; i++){
-//     //     head = head->next;
-//     // }
-//     // it->position++;
-//     // return head->data;
-//     return current;
-// };
-
 int hasNext(Iterator* it){
     Node* node = ((Node*)(it->current));
     return  node != NULL;
@@ -133,6 +107,9 @@ void* next(Iterator* it){
     return result;
 };
 
+int length (List* list){
+    return list->length;
+};
 
 Iterator getIterator(List *dList){
     Iterator listIterator;

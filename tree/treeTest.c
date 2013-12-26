@@ -7,7 +7,7 @@ int cmpInt(void* first,void* second){
     return *(int*)first - *(int*)second;
 };
 
-void test_inserting_first_node_in_linked_list(){
+void test_insert_first_node(){
     Tree tree = createTree(cmpInt);
     Iterator it;
     void *element;
@@ -18,7 +18,7 @@ void test_inserting_first_node_in_linked_list(){
     ASSERT(*(int*)element == element1);
 };
 
-void test_inserting_two_nodes_one_root_and_its_child(){
+void test_insert_two_nodes_one_root_and_a_child(){
     Tree tree = createTree(cmpInt);
     Iterator it;
     int element1 = 10,element2 = 20;
@@ -29,7 +29,7 @@ void test_inserting_two_nodes_one_root_and_its_child(){
     ASSERT(NULL == it.next(&it));
 };
 
-void test_inserting_three_nodes_one_after_the_other(){
+void test_insert_three_nodes(){
     Tree tree = createTree(cmpInt);
     Iterator it;
     int element1 = 10,element2 = 20,element3 = 30,element4 = 40;
@@ -43,7 +43,7 @@ void test_inserting_three_nodes_one_after_the_other(){
     ASSERT(element2 == *(int*)it.next(&it));
 };
 
-void test_inserting_node_at_depth_two(){
+void test_insert_node_at_depth_two(){
     Tree tree = createTree(cmpInt);
     void * element;
     Iterator it;
@@ -58,14 +58,14 @@ void test_inserting_node_at_depth_two(){
     ASSERT(element3 == *(int*)it.next(&it));
 };
 
-void test_searching_root_node(){
+void test_search_root_node(){
     Tree tree = createTree(cmpInt);
     int element1 =10;
     ASSERT(1 == insertTreeNode(&tree,NULL,&element1));
     ASSERT(1 == search(&tree,&element1));
 };
 
-void test_searching_nodes_depth_one(){
+void test_search_nodes_depth_one(){
     Tree tree = createTree(cmpInt);
     int element1 = 10,element2 = 20,element3 = 30;
     insertTreeNode(&tree,NULL,&element1);
@@ -75,7 +75,7 @@ void test_searching_nodes_depth_one(){
     ASSERT(1 == search(&tree,&element3));
 };
 
-void test_searching_at_depth_two(){
+void test_search_at_depth_two(){
     Tree tree = createTree(cmpInt);
     int element1 = 10,element2 = 20,element3 = 30,element4 = 40;
     insertTreeNode(&tree,NULL,&element1);
@@ -84,4 +84,15 @@ void test_searching_at_depth_two(){
     insertTreeNode(&tree,&element2,&element4);
     ASSERT(1 == search(&tree,&element3));
     ASSERT(1 == search(&tree,&element4));
+};
+
+void test_delete_a_node_from_tree(){
+    Tree tree = createTree(cmpInt);
+    int element1 = 10,element2 = 20,element3 = 30,element4 = 40;
+    insertTreeNode(&tree,NULL,&element1);
+    insertTreeNode(&tree,&element1,&element2);
+    insertTreeNode(&tree,&element2,&element3);
+    insertTreeNode(&tree,&element2,&element4);
+    ASSERT(1 == deleteTreeNode(&tree, &element4));
+    ASSERT(0 == search(&tree,&element4));
 };

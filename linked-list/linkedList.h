@@ -24,3 +24,4 @@ Node* createNode(Node *prev, Node *next);
 int insert(List* list,int index, void* data);
 int deleteNode(List* list,int index);
 Iterator getIterator(List* dList);
+int length(List* dList);
