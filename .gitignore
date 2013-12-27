@@ -1,0 +1,4 @@
+createScaffold.sh
+*.exe
+*.core
+*Runner.c
