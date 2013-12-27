@@ -8,11 +8,11 @@ typedef struct {
 typedef int (compare) (void* element1,void* element2);
 typedef void ForEach(void* data);
 
-ArrayList create(int capacity);
+ArrayList createArrList(int capacity);
 
 int add(ArrayList *list, void* data);
-int insert(ArrayList *list, int index, void* data);
-int remove(ArrayList *list, int index);
+int insertToList(ArrayList *list, int index, void* data);
+int removeFromList(ArrayList *list, int index);
 
 void* get(ArrayList *list, int index);
 
@@ -20,5 +20,5 @@ int search(ArrayList *list, void* dataToSearch, compare* cmp);
 
 void dispose(ArrayList *list);
 
-Iterator getIterator(ArrayList* list);
+Iterator getArrayIterator(ArrayList* list);
 void iterate(ArrayList list, ForEach* forEach);
