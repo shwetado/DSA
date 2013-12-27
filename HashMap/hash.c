@@ -11,6 +11,11 @@ typedef struct {
 	void* values;
 } HashElement;
 
+typedef struct {
+	void* data;
+	int index;
+} HashData;
+
 BucketList* createBucketList(){
 	BucketList* newBucket = calloc(1,10);
 	newBucket->keys = create();
@@ -50,31 +55,12 @@ int put(HashMap* hash, void* key, void* value){
 	return insert(list, 0, element);
 };
 
-void* getHashData(HashMap* hash, void* key){
+HashData doKeysMatch(HashMap* hash, void* key){
+	HashData resultdata = {NULL, -1}; 
+	int count = 0 , hashCode = hash->getHash(key);
 	HashElement* elementValue;
-	int hashCode = hash->getHash(key);
 	BucketList* bucketList;
-	List* list;
-	Iterator it;
-	hashCode = getCode(hash, hashCode);
-	bucketList = hash->bucket.base[hashCode];
-	list = bucketList->keys;
-	it = getIterator(list);
-	while(it.hasNext(&it)){
-		elementValue = it.next(&it);
-		if(hash->compare(elementValue->key,key))
-			return elementValue->values;
-	}
-	return NULL;
-};
-
-int removeHashData(HashMap* hash, void* key){
-	int index = 0;
-	HashElement* elementValue;
-	int hashCode = hash->getHash(key);
-	BucketList* bucketList;
-	List* list;
-	Iterator it;
+	List* list;		Iterator it;
 	hashCode = getCode(hash, hashCode);
 	bucketList = hash->bucket.base[hashCode];
 	list = bucketList->keys;
@@ -82,9 +68,26 @@ int removeHashData(HashMap* hash, void* key){
 	while(it.hasNext(&it)){
 		elementValue = it.next(&it);
 		if(hash->compare(elementValue->key,key)){
-			index ++;
-			return deleteNode(list, index-1);
+			count++;
+			resultdata.data = elementValue->values;
+			resultdata.index = count - 1;
 		}
 	}
-	return 0;
+	return resultdata;
+};
+
+void* getHashData(HashMap* hash, void* key){
+	HashData dataFound = doKeysMatch(hash, key);
+	return dataFound.data;
+};
+
+int removeHashData(HashMap* hash, void* key){
+	HashData dataFound = doKeysMatch(hash, key);
+	int hashCode = hash->getHash(key);
+	BucketList* bucketList;
+	List* list;
+	hashCode = getCode(hash, hashCode);
+	bucketList = hash->bucket.base[hashCode];
+	list = bucketList->keys;
+	return deleteNode(list, dataFound.index);
 };
