@@ -67,3 +67,24 @@ void* getHashData(HashMap* hash, void* key){
 	}
 	return NULL;
 };
+
+int removeHashData(HashMap* hash, void* key){
+	int index = 0;
+	HashElement* elementValue;
+	int hashCode = hash->getHash(key);
+	BucketList* bucketList;
+	List* list;
+	Iterator it;
+	hashCode = getCode(hash, hashCode);
+	bucketList = hash->bucket.base[hashCode];
+	list = bucketList->keys;
+	it = getIterator(list);
+	while(it.hasNext(&it)){
+		elementValue = it.next(&it);
+		if(hash->compare(elementValue->key,key)){
+			index ++;
+			return deleteNode(list, index-1);
+		}
+	}
+	return 0;
+};

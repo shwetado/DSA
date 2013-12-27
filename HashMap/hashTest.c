@@ -46,3 +46,15 @@ void test_doesnt_search_element_from_hash_map(){
 	ASSERT(NULL == getHashData(&hash, &key));
 };
 
+void test_deletes_element_from_hash_map_if_present(){
+	int key = 555;
+	HashMap hash = createHash(getHash, compareInterns);
+	ASSERT(1 == put(&hash, &key, &samiksha));
+	ASSERT(1 == removeHashData(&hash, &key));
+};
+
+void test_does_not_delete_element_from_hash_map_when_absent(){
+	int key = 555;
+	HashMap hash = createHash(getHash, compareInterns);
+	ASSERT(0 == removeHashData(&hash, &key));
+};

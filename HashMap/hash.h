@@ -12,3 +12,4 @@ typedef struct {
 HashMap createHash(hashCodeGenerator gethash, keyComparator compare);
 int put(HashMap* hash, void* key, void* value);
 void* getHashData(HashMap* hash, void* key);
+int removeHashData(HashMap* hash, void* key);
